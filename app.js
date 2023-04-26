@@ -26,9 +26,9 @@ server.listen(port, () => {
 });
 const SERVER_ENDPOINT_REDIRECT =
   process.env.SERVER_ENDPOINT_REDIRECT || "localhost:3000";
-const redirect = encodeURIComponent(SERVER_ENDPOINT_REDIRECT);
-
-console.log(redirect);
+const CALLBACK_URL =
+  process.env.CALLBACK_URL ||
+  "https://adsgency-take-home.onrender.com/authCallback";
 
 const CLIENT_KEY = "awbpei30wwvrdl6a";
 app.get("/oauth", (req, res) => {
@@ -40,8 +40,12 @@ app.get("/oauth", (req, res) => {
   url += `?client_key=${CLIENT_KEY}`;
   url += "&scope=user.info.basic";
   url += "&response_type=code";
-  url += `&redirect_uri=${redirect}`;
+  url += `&redirect_uri=${encodeURIComponent(SERVER_ENDPOINT_REDIRECT)}`;
   url += "&state=" + csrfState;
 
   res.redirect(url);
+});
+app.post("/authCallback", (req, res) => {
+  console.log(req.body);
+  res.send(200);
 });
