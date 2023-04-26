@@ -30,7 +30,7 @@ const CALLBACK_URL =
   process.env.CALLBACK_URL ||
   "https://adsgency-take-home.onrender.com/authCallback";
 
-const CLIENT_KEY = "awbpei30wwvrdl6a";
+const CLIENT_KEY = "awi7kmhg3qpdcx1e";
 app.get("/oauth", (req, res) => {
   const csrfState = Math.random().toString(36).substring(2);
   res.cookie("csrfState", csrfState, { maxAge: 60000 });
