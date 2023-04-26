@@ -26,7 +26,7 @@ server.listen(port, () => {
 });
 const SERVER_ENDPOINT_REDIRECT =
   process.env.SERVER_ENDPOINT_REDIRECT || "localhost:3000";
-const redirect = encodeURIComponent("https://tiktok.com");
+const redirect = encodeURIComponent(SERVER_ENDPOINT_REDIRECT);
 
 console.log(redirect);
 
