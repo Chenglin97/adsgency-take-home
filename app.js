@@ -10,7 +10,14 @@ const cors = require("cors");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/index.html");
+  res.sendFile(__dirname + "/public/index.html");
+});
+
+app.get("/term-of-service", function (req, res) {
+  res.sendFile(__dirname + "/public/index.html");
+});
+app.get("/privacy-policy", function (req, res) {
+  res.sendFile(__dirname + "/public/index.html");
 });
 
 const port = process.env.port || 3000;
@@ -19,11 +26,11 @@ server.listen(port, () => {
 });
 const SERVER_ENDPOINT_REDIRECT =
   process.env.SERVER_ENDPOINT_REDIRECT || "localhost:3000";
-const redirect = encodeURIComponent(SERVER_ENDPOINT_REDIRECT);
+const redirect = encodeURIComponent("https://tiktok.com");
 
 console.log(redirect);
 
-const CLIENT_KEY = "awujnpxn69c76n3p";
+const CLIENT_KEY = "awbpei30wwvrdl6a";
 app.get("/oauth", (req, res) => {
   const csrfState = Math.random().toString(36).substring(2);
   res.cookie("csrfState", csrfState, { maxAge: 60000 });
