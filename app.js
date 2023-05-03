@@ -127,5 +127,11 @@ app.get("/revoke", async (req, res) => {
 
   await axios.post(url_revoke);
   req.session = null;
+
+  res.cookie("csrfState", "", {
+    expires: new Date(Date.now() - 1000),
+    maxAge: 0,
+  });
+
   res.redirect("/?login=logout");
 });
