@@ -86,7 +86,7 @@ app.get("/tiktok", async (req, res) => {
   try {
     const response = await axios.post(url_access_token);
     console.log("response.data", response.data);
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token } = response.data.data;
 
     req.session.user = {
       access_token: access_token,
