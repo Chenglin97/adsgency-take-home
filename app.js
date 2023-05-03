@@ -70,12 +70,12 @@ app.get("/oauth", (req, res) => {
 
 app.get("/tiktok", async (req, res) => {
   const { code, state } = req.query;
-  // const { csrfState } = req.cookies;
+  const { csrfState } = req.cookies;
 
-  // if (state !== csrfState) {
-  //   res.status(422).send("Invalid state");
-  //   return;
-  // }
+  if (state !== csrfState) {
+    res.status(422).send("Invalid state");
+    return;
+  }
 
   let url_access_token = "https://open-api.tiktok.com/oauth/access_token/";
   url_access_token += "?client_key=" + CLIENT_KEY;
@@ -94,12 +94,11 @@ app.get("/tiktok", async (req, res) => {
       state,
     };
     console.log("req.session.user", req.session.user);
-    res.send(response.data);
-    // res.redirect("/?login=success");
+    res.redirect("/?login=success");
   } catch (error) {
     console.error("Error fetching access token:", error);
     res.send(error);
-    // res.redirect("/?login=error");
+    res.redirect("/?login=error");
   }
 });
 
