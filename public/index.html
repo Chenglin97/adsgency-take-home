@@ -58,7 +58,7 @@
             const logoutResponse = await fetch(
               `/revoke?open_id=${open_id}&access_token=${access_token}`,
               {
-                method: "POST",
+                method: "GET",
               }
             );
 
@@ -85,6 +85,9 @@
         if (loginStatus === "error") {
           loginMessage.innerText = "Login failed. Please try again.";
         }
+        if(loginStatus === "logout" {
+          loginMessage.innerText = "Logout was successful.";
+        })
       </script>
     </footer>
   </body>

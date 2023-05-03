@@ -85,13 +85,13 @@ app.get("/tiktok", async (req, res) => {
 
   try {
     const response = await axios.post(url_access_token);
-
+    console.log("response.data", response.data);
     const { access_token, refresh_token } = response.data;
 
     req.session.user = {
-      access_token,
-      refresh_token,
-      state,
+      access_token: access_token,
+      refresh_token: refresh_token,
+      state: state,
     };
     console.log("req.session.user", req.session.user);
     res.redirect("/?login=success");
@@ -117,16 +117,14 @@ app.get("/refresh_token/", (req, res) => {
     });
 });
 
-app.get("/revoke", (req, res) => {
+app.get("/revoke", async (req, res) => {
   const { open_id, access_token } = req.query;
 
   let url_revoke = "https://open-api.tiktok.com/oauth/revoke/";
   url_revoke += "?open_id=" + open_id;
   url_revoke += "&access_token=" + access_token;
 
-  fetch(url_revoke, { method: "post" })
-    .then((res) => res.json())
-    .then((json) => {
-      res.send(json);
-    });
+  await axios.post(url_revoke);
+
+  res.redirect("/?login=logout");
 });
