@@ -96,10 +96,10 @@ app.get("/tiktok", async (req, res) => {
     };
     console.log("req.session.user", req.session.user);
 
-    res.redirect("/?login=success");
+    // res.redirect("/?login=success");
   } catch (error) {
     console.error("Error fetching access token:", error);
-    res.redirect("/?login=error");
+    // res.redirect("/?login=error");
   }
 });
 
