@@ -5,8 +5,52 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Homepage</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #008489;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      #logoutBtn {
+        display: none;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+    </style>
   </head>
   <body>
-    <a href="/oauth">Continue with TikTok</a>
+    <div id="loginMessage"></div>
+    <a id="tiktokLogin" href="/oauth">Continue with TikTok</a>
+    <button id="logoutBtn">Logout</button>
+    <footer id="footer">
+      <script>
+        function getQueryParam(name) {
+          const urlSearchParams = new URLSearchParams(window.location.search);
+          return urlSearchParams.get(name);
+        }
+
+        const loginMessage = document.getElementById("loginMessage");
+        const loginStatus = getQueryParam("login");
+        if (loginStatus === "success") {
+          loginMessage.innerText = "Login was successful.";
+        }
+        if (loginStatus === "error") {
+          loginMessage.innerText = "Login failed. Please try again.";
+        }
+      </script>
+    </footer>
   </body>
 </html>
