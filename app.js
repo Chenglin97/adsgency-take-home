@@ -91,14 +91,14 @@ app.get("/tiktok", async (req, res) => {
     req.session.user = {
       access_token,
       refresh_token,
-      scopes,
       state,
     };
     console.log("req.session.user", req.session.user);
-
+    res.send(response.data);
     // res.redirect("/?login=success");
   } catch (error) {
     console.error("Error fetching access token:", error);
+    res.send(error);
     // res.redirect("/?login=error");
   }
 });
