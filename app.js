@@ -70,12 +70,12 @@ app.get("/oauth", (req, res) => {
 
 app.get("/tiktok", async (req, res) => {
   const { code, state } = req.query;
-  const { csrfState } = req.cookies;
+  // const { csrfState } = req.cookies;
 
-  if (state !== csrfState) {
-    res.status(422).send("Invalid state");
-    return;
-  }
+  // if (state !== csrfState) {
+  //   res.status(422).send("Invalid state");
+  //   return;
+  // }
 
   let url_access_token = "https://open-api.tiktok.com/oauth/access_token/";
   url_access_token += "?client_key=" + CLIENT_KEY;
