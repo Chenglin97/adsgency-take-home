@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(
   session({
     secret: "b43bc7181680b12b83f67c99d9970a5f",
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
   })
