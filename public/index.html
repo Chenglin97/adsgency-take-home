@@ -63,7 +63,7 @@
             );
 
             if (logoutResponse.status === 200) {
-              checkLoginStatus();
+              window.location.href = "/?login=logout";
             } else {
               alert("Error logging out.");
             }
