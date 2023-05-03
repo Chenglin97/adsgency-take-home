@@ -50,24 +50,20 @@
         }
 
         async function logout() {
-          const response = await fetch("/checkLogin");
-          const data = await response.json();
-          if (data.isLoggedIn) {
-            const open_id = data.user.open_id;
-            const access_token = data.user.access_token;
-            const logoutResponse = await fetch(
-              `/revoke?open_id=${open_id}&access_token=${access_token}`,
-              {
-                method: "GET",
-                credentials: "include",
-              }
-            );
-
-            if (logoutResponse.status === 200) {
-              window.location.href = "/?login=logout";
-            } else {
-              alert("Error logging out.");
+          const open_id = data.user.open_id;
+          const access_token = data.user.access_token;
+          const logoutResponse = await fetch(
+            `/revoke?open_id=${open_id}&access_token=${access_token}`,
+            {
+              method: "GET",
+              credentials: "include",
             }
+          );
+
+          if (logoutResponse.status === 200) {
+            window.location.href = "/?login=logout";
+          } else {
+            alert("Error logging out.");
           }
         }
 
