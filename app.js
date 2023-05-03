@@ -126,6 +126,6 @@ app.get("/revoke", async (req, res) => {
   url_revoke += "&access_token=" + access_token;
 
   await axios.post(url_revoke);
-
+  req.session = null;
   res.redirect("/?login=logout");
 });
