@@ -60,33 +60,6 @@ app.post("/authCallback", (req, res) => {
   res.send(200);
 });
 
-app.get("/redirect", async (req, res) => {
-  const { code, state } = req.query;
-  const { csrfState } = req.cookies;
-
-  if (state !== csrfState) {
-    res.status(422).send("Invalid state");
-    return;
-  }
-
-  let url_access_token = "https://open-api.tiktok.com/oauth/access_token/";
-  url_access_token += "?client_key=" + CLIENT_KEY;
-  url_access_token += "&client_secret=" + CLIENT_SECRET;
-  url_access_token += "&code=" + code;
-  url_access_token += "&grant_type=authorization_code";
-
-  axios
-    .post(url_access_token)
-    .then((response) => {
-      console.log(response.data);
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching access token:", error);
-      res.status(500).send("Error fetching access token.");
-    });
-});
-
 app.get("/tiktok", async (req, res) => {
   const { code, scopes, state } = req.query;
   const DOMAIN = "adsgency-take-home.onrender.com";
@@ -133,4 +106,45 @@ app.get("/logout", (req, res) => {
 app.get("/checkLogin", (req, res) => {
   const isLoggedIn = req.session && req.session.user;
   res.json({ isLoggedIn });
+});
+
+app.get("/redirect", async (req, res) => {
+  const { code, state } = req.query;
+  const { csrfState } = req.cookies;
+
+  if (state !== csrfState) {
+    res.status(422).send("Invalid state");
+    return;
+  }
+
+  let url_access_token = "https://open-api.tiktok.com/oauth/access_token/";
+  url_access_token += "?client_key=" + CLIENT_KEY;
+  url_access_token += "&client_secret=" + CLIENT_SECRET;
+  url_access_token += "&code=" + code;
+  url_access_token += "&grant_type=authorization_code";
+
+  axios
+    .post(url_access_token)
+    .then((response) => {
+      console.log(response.data);
+      res.send(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching access token:", error);
+      res.status(500).send("Error fetching access token.");
+    });
+});
+
+app.get("/revoke", (req, res) => {
+  const { open_id, access_token } = req.query;
+
+  let url_revoke = "https://open-api.tiktok.com/oauth/revoke/";
+  url_revoke += "?open_id=" + open_id;
+  url_revoke += "&access_token=" + access_token;
+
+  fetch(url_revoke, { method: "post" })
+    .then((res) => res.json())
+    .then((json) => {
+      res.send(json);
+    });
 });

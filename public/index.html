@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -34,9 +33,33 @@
   <body>
     <div id="loginMessage"></div>
     <a id="tiktokLogin" href="/oauth">Continue with TikTok</a>
-    <button id="logoutBtn">Logout</button>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
     <footer id="footer">
       <script>
+        async function checkLoginStatus() {
+          const response = await fetch("/checkLogin");
+          const data = await response.json();
+
+          if (data.isLoggedIn) {
+            document.getElementById("tiktokLogin").style.display = "none";
+            document.getElementById("logoutBtn").style.display = "block";
+          } else {
+            document.getElementById("tiktokLogin").style.display = "block";
+            document.getElementById("logoutBtn").style.display = "none";
+          }
+        }
+
+        async function logout() {
+          const response = await fetch("/logout");
+          if (response.status === 200) {
+            checkLoginStatus();
+          } else {
+            alert("Error logging out.");
+          }
+        }
+
+        checkLoginStatus();
+
         function getQueryParam(name) {
           const urlSearchParams = new URLSearchParams(window.location.search);
           return urlSearchParams.get(name);
