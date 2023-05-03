@@ -9,6 +9,9 @@ const axios = require("axios");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+const CLIENT_KEY = "awbpei30wwvrdl6a";
+const CLIENT_SECRET = "b43bc7181680b12b83f67c99d9970a5f";
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(
@@ -37,7 +40,6 @@ server.listen(port, () => {
 });
 
 app.get("/oauth", (req, res) => {
-  const CLIENT_KEY = "awbpei30wwvrdl6a";
   const DOMAIN = "adsgency-take-home.onrender.com";
   const csrfState = Math.random().toString(36).substring(2);
   res.cookie("csrfState", csrfState, { maxAge: 60000 });
@@ -58,11 +60,35 @@ app.post("/authCallback", (req, res) => {
   res.send(200);
 });
 
+app.get("/redirect", async (req, res) => {
+  const { code, state } = req.query;
+  const { csrfState } = req.cookies;
+
+  if (state !== csrfState) {
+    res.status(422).send("Invalid state");
+    return;
+  }
+
+  let url_access_token = "https://open-api.tiktok.com/oauth/access_token/";
+  url_access_token += "?client_key=" + CLIENT_KEY;
+  url_access_token += "&client_secret=" + CLIENT_SECRET;
+  url_access_token += "&code=" + code;
+  url_access_token += "&grant_type=authorization_code";
+
+  axios
+    .post(url_access_token)
+    .then((response) => {
+      console.log(response.data);
+      res.send(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching access token:", error);
+      res.status(500).send("Error fetching access token.");
+    });
+});
+
 app.get("/tiktok", async (req, res) => {
   const { code, scopes, state } = req.query;
-
-  const CLIENT_KEY = "awbpei30wwvrdl6a";
-  const CLIENT_SECRET = "b43bc7181680b12b83f67c99d9970a5f";
   const DOMAIN = "adsgency-take-home.onrender.com";
   const redirect = encodeURIComponent(`https://${DOMAIN}/tiktok`);
 
