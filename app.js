@@ -39,6 +39,18 @@ server.listen(port, () => {
   console.log(`server started on port ${port}`);
 });
 
+app.get("/checkLogin", (req, res) => {
+  const isLoggedIn = req.session && req.session.user;
+  if (isLoggedIn) {
+    res.json({
+      isLoggedIn: true,
+      user: req.session.user,
+    });
+  } else {
+    res.json({ isLoggedIn: false });
+  }
+});
+
 app.get("/oauth", (req, res) => {
   const DOMAIN = "adsgency-take-home.onrender.com";
   const csrfState = Math.random().toString(36).substring(2);
@@ -55,60 +67,8 @@ app.get("/oauth", (req, res) => {
 
   res.redirect(url);
 });
-app.post("/authCallback", (req, res) => {
-  console.log(req.body);
-  res.send(200);
-});
 
 app.get("/tiktok", async (req, res) => {
-  const { code, scopes, state } = req.query;
-  const DOMAIN = "adsgency-take-home.onrender.com";
-  const redirect = encodeURIComponent(`https://${DOMAIN}/tiktok`);
-
-  try {
-    const response = await axios.post(
-      "https://www.tiktok.com/oauth/access_token/",
-      {
-        client_key: CLIENT_KEY,
-        client_secret: CLIENT_SECRET,
-        code: code,
-        grant_type: "authorization_code",
-        redirect_uri: redirect,
-      }
-    );
-
-    const { access_token, refresh_token } = response.data;
-
-    req.session.user = {
-      access_token,
-      refresh_token,
-      scopes,
-      state,
-    };
-
-    res.redirect("/?login=success");
-  } catch (error) {
-    console.error("Error fetching access token:", error);
-    res.redirect("/?login=error");
-  }
-});
-
-app.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).send("Error logging out.");
-    }
-    res.clearCookie("connect.sid");
-    res.status(200).send("Logged out successfully.");
-  });
-});
-
-app.get("/checkLogin", (req, res) => {
-  const isLoggedIn = req.session && req.session.user;
-  res.json({ isLoggedIn });
-});
-
-app.get("/redirect", async (req, res) => {
   const { code, state } = req.query;
   const { csrfState } = req.cookies;
 
@@ -123,15 +83,38 @@ app.get("/redirect", async (req, res) => {
   url_access_token += "&code=" + code;
   url_access_token += "&grant_type=authorization_code";
 
-  axios
-    .post(url_access_token)
-    .then((response) => {
-      console.log(response.data);
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching access token:", error);
-      res.status(500).send("Error fetching access token.");
+  try {
+    const response = await axios.post(url_access_token);
+
+    const { access_token, refresh_token } = response.data;
+
+    req.session.user = {
+      access_token,
+      refresh_token,
+      scopes,
+      state,
+    };
+    console.log("req.session.user", req.session.user);
+
+    res.redirect("/?login=success");
+  } catch (error) {
+    console.error("Error fetching access token:", error);
+    res.redirect("/?login=error");
+  }
+});
+
+app.get("/refresh_token/", (req, res) => {
+  const refresh_token = req.query.refresh_token;
+
+  let url_refresh_token = "https://open-api.tiktok.com/oauth/refresh_token/";
+  url_refresh_token += "?client_key=" + CLIENT_KEY;
+  url_refresh_token += "&grant_type=refresh_token";
+  url_refresh_token += "&refresh_token=" + refresh_token;
+
+  fetch(url_refresh_token, { method: "post" })
+    .then((res) => res.json())
+    .then((json) => {
+      res.send(json);
     });
 });
 
